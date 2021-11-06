@@ -1,4 +1,6 @@
 const express = require('express')
+const db = require('../../models')
+const User = db.User
 const router = express.Router()
 
 // 登入頁
@@ -16,7 +18,9 @@ router.get('/register', (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-  res.send('sent register')
+  const { name, email, password, confirmPassword } = req.body
+  User.create({ name, email, password })
+    .then(user => res.redirect('/'))
 })
 
 //登出
