@@ -7,7 +7,7 @@ const app = express()
 const PORT = 3000
 
 // set templates
-app.use('hbs', exphbs({ defaultLayout: "main", extname: '.hbs' }))
+app.engine('hbs', exphbs({ defaultLayout: "main", extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
 app.use(express.urlencoded({ extended: true }))
@@ -16,6 +16,14 @@ app.use(methodOverride('_method'))
 // Routers
 app.get('/', (req, res) => {
   res.send('Hello World!')
+})
+
+app.get('/users/login', (req, res) => {
+  res.render('login')
+})
+
+app.get('/users/register', (req, res) => {
+  res.render('register')
 })
 
 app.listen(PORT, () => {
