@@ -11,13 +11,16 @@ module.exports = app => {
     User.findOne({ where: { email } })
       .then(user => {
         if (!user) {
+          console.log('That email is not registered!')
           return done(null, false, { message: 'That email is not registered!' })
         }
         return bcrypt.compare(password, user.password)
           .then(isMatch => {
             if (!isMatch) {
+              console.log('Email or Password incorrect.')
               return done(null, false, { message: 'Email or Password incorrect.' })
             }
+            console.log('Login successfully')
             return done(null, user)
           })
       })
