@@ -37,5 +37,15 @@ router.put('/:id', (req, res) => {
 })
 
 // delete page
+router.delete('/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => {
+      console.log('to delete:', todo.name)
+      return todo.destroy()
+    })
+    .then(() => { res.redirect('/') })
+    .catch(error => { console.error(error) })
+})
 
 module.exports = router
