@@ -4,11 +4,17 @@ const User = db.User
 const Todo = db.Todo
 const router = express.Router()
 
-// detail page
-router.get('/:id', (req, res) => {
-  const id = req.params.id
-  return Todo.findByPk(id)
-    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+// create page
+router.get('/new', (req, res) => {
+  return res.render('new')
+})
+
+router.post('/', (req, res) => {
+  const UserId = req.user.id  //model屬性名稱為UserId
+  const name = req.body.name
+  console.log('userId:', UserId)
+  return Todo.create({ name, UserId })
+    .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
 
@@ -33,6 +39,14 @@ router.put('/:id', (req, res) => {
       return todo.save()
     })
     .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
+
+// detail page
+router.get('/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
     .catch(error => console.log(error))
 })
 
