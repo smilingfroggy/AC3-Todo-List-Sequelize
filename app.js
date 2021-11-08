@@ -7,8 +7,12 @@ const flash = require('connect-flash')
 const routes = require('./routes')
 const bcrypt = require('bcryptjs')
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT
 
 // set templates
 app.engine('hbs', exphbs({ defaultLayout: "main", extname: '.hbs' }))
@@ -19,7 +23,7 @@ app.use(methodOverride('_method'))
 
 // session and passport
 app.use(session({
-  secret: 'MySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
