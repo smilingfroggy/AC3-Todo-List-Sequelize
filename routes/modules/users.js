@@ -22,26 +22,42 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
-  User.findOne({ where: {email}})
+  const errors = []
+  if (!name || !email || !password || !confirmPassword) {
+    errors.push({ message: '所有欄位都是必填' })
+  }
+  if (password !== confirmPassword) {
+    errors.push({ message: '兩次輸入的密碼不同' })
+  }
+  if (errors.length) {
+    return res.render('register', { errors, name, email, password, confirmPassword })
+  }
+
+  User.findOne({ where: { email } })
     .then(user => {
       if (user) {
+        errors.push({ message: '此帳號已註冊過' })
         console.log('User already exists')
         return res.render('register', {
-          name, email, password, confirmPassword
+          errors, name, email, password, confirmPassword
         })
       }
       return bcrypt
         .genSalt(10)
         .then(salt => bcrypt.hash(password, salt))
         .then(hash => User.create({ name, email, password: hash }))
-        .then( () => res.redirect('/'))
-        .catch( err => console.log(err))
+        .then(() => {
+          req.flash({ success_msg: '您已成功註冊，請重新登入' })
+          res.redirect('/')
+        })
+        .catch(err => console.log(err))
     })
 })
 
 //登出
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash('success_msg', '您已成功登出')  //沒有作用
   res.redirect('/users/login')
 })
 
